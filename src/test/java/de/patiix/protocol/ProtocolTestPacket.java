@@ -30,7 +30,8 @@ public class ProtocolTestPacket extends Packet {
 
     private String message;
 
-    public ProtocolTestPacket() {
+    @SuppressWarnings("unused")
+    public ProtocolTestPacket() { // necessary for initialization
     }
 
     public ProtocolTestPacket(String message) {

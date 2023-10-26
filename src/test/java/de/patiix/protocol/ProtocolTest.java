@@ -59,11 +59,9 @@ public class ProtocolTest {
     public void setup() throws InterruptedException {
         SocketServer socketServer = Protocol.createServer(this.config);
         socketServer.registerPacket(0, ProtocolTestPacket.class);
-        socketServer.registerListener(SocketInitPacket.class, (packet, channel) -> {
-            channel.writeAndFlush(new ProtocolTestPacket(debug));
-        });
+        socketServer.registerListener(SocketInitPacket.class, (packet, channel) -> channel.writeAndFlush(new ProtocolTestPacket(debug)));
 
-        Thread.sleep(2000);
+        Thread.sleep(2000); // give the server time to start
     }
 
     @Test
@@ -71,11 +69,11 @@ public class ProtocolTest {
         SocketClient socketClient = Protocol.createClient(this.config, UUID.randomUUID());
         socketClient.registerPacket(0, ProtocolTestPacket.class);
         socketClient.registerListener(ProtocolTestPacket.class, (packet, channel) -> {
-            this.latch.countDown();
+            this.latch.countDown(); // wait for packet
             Assert.assertEquals(packet.getMessage(), this.debug);
         });
 
-        this.latch.await();
+        this.latch.await(); // wait for packet
     }
 
 }

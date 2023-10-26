@@ -14,6 +14,7 @@ import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import java.lang.reflect.Field;
 
 /*
  * MIT License
@@ -53,6 +54,32 @@ public class ProtocolUtil {
 
     public static EventLoopGroup getEventLoopGroup() {
         return EPOLL ? new EpollEventLoopGroup() : KQUEUE ? new KQueueEventLoopGroup() : new NioEventLoopGroup();
+    }
+
+    public static Object get(Object fieldClass, String fieldName) {
+        Object value = null;
+
+        try {
+            Field field = fieldClass.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            value = field.get(fieldClass);
+            field.setAccessible(false);
+        } catch (IllegalAccessException | NoSuchFieldException exception) {
+            System.err.println(exception.getMessage());
+        }
+
+        return value;
+    }
+
+    public static void set(Object fieldClass, String fieldName, Object fieldValue) {
+        try {
+            Field field = fieldClass.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(fieldClass, fieldValue);
+            field.setAccessible(false);
+        } catch (IllegalAccessException | NoSuchFieldException exception) {
+            System.err.println(exception.getMessage());
+        }
     }
 
 }

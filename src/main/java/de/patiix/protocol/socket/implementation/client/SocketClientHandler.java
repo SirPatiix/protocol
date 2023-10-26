@@ -1,5 +1,6 @@
 package de.patiix.protocol.socket.implementation.client;
 
+import de.patiix.protocol.ProtocolUtil;
 import de.patiix.protocol.packet.Packet;
 import de.patiix.protocol.packet.PacketListener;
 import de.patiix.protocol.socket.SocketInitPacket;
@@ -36,14 +37,14 @@ public class SocketClientHandler extends PacketChannelInboundHandler {
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext context) throws Exception {
-        ((SocketClient) this.getSocket()).setChannel(context.channel());
-        context.channel().writeAndFlush(new SocketInitPacket(((SocketClient) this.getSocket()).getKey()));
+    public void channelActive(ChannelHandlerContext context) {
+        ProtocolUtil.set(this.getSocket(), "channel", context.channel());
+        context.channel().writeAndFlush(new SocketInitPacket(ProtocolUtil.get(this.getSocket(), "key")));
     }
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void channelRead0(ChannelHandlerContext context, Packet packet) throws Exception {
+    public void channelRead0(ChannelHandlerContext context, Packet packet) {
         if (this.getSocket().getListeners().containsKey(packet.getClass())) {
             for (PacketListener listener : this.getSocket().getListeners().get(packet.getClass())) {
                 listener.handle(packet, context.channel());

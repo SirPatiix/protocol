@@ -48,6 +48,7 @@ public class SocketClient extends Socket {
     private final EventLoopGroup eventLoopGroup;
     private final Bootstrap bootstrap;
 
+    @SuppressWarnings("all")
     private final Object key;
 
     public SocketClient(SocketConfig config, Object key) throws ClassCastException {
@@ -93,24 +94,9 @@ public class SocketClient extends Socket {
         });
     }
 
-    @Deprecated
-    public Object getKey() {
-        return this.key;
-    }
-
-    @Deprecated
-    public Channel getChannel() {
-        return this.channel;
-    }
-
-    @Deprecated
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
-
     @SuppressWarnings("unused")
     public <T extends Packet> void sendPacket(T packet) {
-        this.getChannel().writeAndFlush(packet);
+        this.channel.writeAndFlush(packet);
     }
 
 }
