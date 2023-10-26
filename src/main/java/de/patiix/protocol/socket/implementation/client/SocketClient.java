@@ -9,6 +9,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +43,8 @@ public class SocketClient extends Socket {
 
     private Channel channel;
 
+    private final ExecutorService executor;
+
     private final EventLoopGroup eventLoopGroup;
     private final Bootstrap bootstrap;
 
@@ -64,6 +67,8 @@ public class SocketClient extends Socket {
         this.bootstrap.channel(ProtocolUtil.getSocketChannel());
         this.bootstrap.handler(new SocketClientInitializer(this));
 
+        this.executor = Executors.newSingleThreadExecutor();
+
         this.connect();
     }
 
@@ -74,7 +79,7 @@ public class SocketClient extends Socket {
             if (!(future.isSuccess())) {
                 eventLoopGroup.schedule(this::connect, 2, TimeUnit.SECONDS);
             } else {
-                Executors.newSingleThreadExecutor().execute(() -> {
+                this.executor.execute(() -> {
                     try {
                         this.channel = future.channel();
 
