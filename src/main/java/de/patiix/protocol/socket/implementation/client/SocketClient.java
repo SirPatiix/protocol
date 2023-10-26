@@ -48,7 +48,7 @@ public class SocketClient extends Socket {
     private final Object key;
 
     public SocketClient(SocketConfig config, Object key) throws ClassCastException {
-        if (!(key.getClass().isInstance(config.getKey()))) {
+        if (!(config.getKey().isAssignableFrom(key.getClass()))) {
             throw new ClassCastException("unable to initialize key");
         }
 

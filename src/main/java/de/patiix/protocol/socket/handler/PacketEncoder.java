@@ -41,7 +41,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
     @Override
     public void encode(ChannelHandlerContext context, Packet packet, ByteBuf buf) throws Exception {
         int id = this.socket.getPacket(packet.getClass());
-        if (id < -1) {
+        if (id < 0) {
             return;
         }
 

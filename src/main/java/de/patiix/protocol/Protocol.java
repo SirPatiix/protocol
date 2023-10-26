@@ -32,18 +32,19 @@ public class Protocol {
 
     public static SocketClient createClient(SocketConfig config, Object key) {
         SocketClient socketClient = new SocketClient(config, key);
-        socketClient.registerPacket(-1, new SocketInitPacket());
+        socketClient.registerPacket(Integer.MAX_VALUE, new SocketInitPacket());
 
         return socketClient;
     }
 
     public static SocketServer createServer(SocketConfig config) {
         SocketServer socketServer = new SocketServer(config);
-        socketServer.registerPacket(-1, new SocketInitPacket());
+        socketServer.registerPacket(Integer.MAX_VALUE, new SocketInitPacket());
         socketServer.registerListener(SocketInitPacket.class, (packet, channel) -> {
-            if (!(packet.getKey().getClass().isInstance(config.getKey()))) {
+            if (!(config.getKey().isAssignableFrom(packet.getKey().getClass()))) {
                 throw new ClassCastException("unable to read key");
             }
+
             socketServer.getChannels().put(packet.getKey(), channel);
         });
 
